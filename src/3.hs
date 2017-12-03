@@ -41,9 +41,8 @@ stepsbetween a b = min absr absu + max absr absu - min absr absu
 neighbours::Int -> [Int]
 neighbours n = filter (\x -> stepsbetween x n == 1) [1..n]
 
-nsum :: Int -> Int
-nsum 1 = 1
-nsum n = sum $ map nsum (neighbours n)
+accsum = (map nsum [0..] !! )
+  where nsum 1 = 1
+        nsum n = sum $ map accsum (neighbours n)
 
-
-firstgreater n = head $ dropWhile (<= n) (map nsum [1..])
+firstgreater n = head $ dropWhile (<= n) (map accsum [1..])
