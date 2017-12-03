@@ -5,8 +5,10 @@ import           Data.Char
 main = do
   let n = read "347991"::Int
   print $ minsteps $ directions n
+  print $ firstgreater n
 
 directions:: Int -> [Int]
+directions 1 = []
 directions n =
   let d = concatMap (replicate 2 ) [1..]
       acc = scanl (+) 1 d
@@ -25,3 +27,23 @@ minsteps d = abs (right - left) + abs (up - down)
         up = sum $ every (drop 1 d) 4
         left = sum $ every (drop 2 d) 4
         down = sum $ every (drop 3 d) 4
+
+stepsbetween::Int -> Int  -> Int
+stepsbetween a b = min absr absu + max absr absu - min absr absu
+                      where absr = abs(right - left)
+                            absu = abs(up - down)
+                            right = sum (every (directions a) 4) - sum (every (directions b) 4)
+                            up = sum (every (drop 1 (directions a)) 4) - sum (every (drop 1 (directions b)) 4)
+                            left = sum (every (drop 2 (directions a)) 4) - sum (every (drop 2 (directions b)) 4)
+                            down = sum (every (drop 3 (directions a)) 4) - sum (every (drop 3 (directions b)) 4)
+
+
+neighbours::Int -> [Int]
+neighbours n = filter (\x -> stepsbetween x n == 1) [1..n]
+
+nsum :: Int -> Int
+nsum 1 = 1
+nsum n = sum $ map nsum (neighbours n)
+
+
+firstgreater n = head $ dropWhile (<= n) (map nsum [1..])
