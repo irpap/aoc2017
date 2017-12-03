@@ -1,6 +1,8 @@
 module Main where
 
 import           Data.Char
+import           Data.List
+import           Data.List.Split
 
 main = do
   let n = read "347991"::Int
@@ -16,25 +18,24 @@ directions n =
       len = length $ takeWhile (n > ) acc
     in take (len - 1 ) d ++ [n - (acc !! (len - 1))]
 
-every [] _ = []
-every (x:xs) n = x : f xs n
-  where f xs n = case drop (n-1) xs of
-                  (y:ys) -> y : f ys n
-                  [] -> []
+d :: [Int] -> Int -> Int
+d ds n | n < length t = sum $ t !! n
+       | otherwise = 0
+  where t = (transpose . chunksOf 4) ds
 
 minsteps::[Int] -> Int
-minsteps d = abs (right - left) + abs (up - down)
-  where right = sum $ every d 4
-        up = sum $ every (drop 1 d) 4
-        left = sum $ every (drop 2 d) 4
-        down = sum $ every (drop 3 d) 4
+minsteps ds = abs (right - left) + abs (up - down)
+  where right = d ds 0
+        up = d ds 1
+        left = d ds 2
+        down = d ds 3
 
 stepsbetween::Int -> Int  -> Int
 stepsbetween a b = max (abs (right - left)) (abs (up - down))
-                  where right = sum (every (directions a) 4) - sum (every (directions b) 4)
-                        up = sum (every (drop 1 (directions a)) 4) - sum (every (drop 1 (directions b)) 4)
-                        left = sum (every (drop 2 (directions a)) 4) - sum (every (drop 2 (directions b)) 4)
-                        down = sum (every (drop 3 (directions a)) 4) - sum (every (drop 3 (directions b)) 4)
+                  where right = d (directions a) 0 -  d (directions b) 0
+                        up = d (directions a) 1 - d (directions b) 1
+                        left = d (directions a) 2 - d (directions b) 2
+                        down = d (directions a) 3 - d (directions b) 3
 
 neighbours::Int -> [Int]
 neighbours n = filter (\x -> stepsbetween x n == 1) [1..n]
