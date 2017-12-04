@@ -12,4 +12,4 @@ validPassword1::[String] -> Bool
 validPassword1 p = all (\x -> notElem x (delete x p)) p
 
 validPassword2::[String] -> Bool
-validPassword2 p = validPassword1 (map sort p)
+validPassword2 = validPassword1 . map sort
